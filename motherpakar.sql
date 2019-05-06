@@ -90,7 +90,6 @@ CREATE TABLE IF NOT EXISTS `motherpakar`.`tbl_kosultasi` (
   `waktu` DATETIME NOT NULL,
   `kd_kerusakan` CHAR(3) NOT NULL,
   PRIMARY KEY (`id_konsultasi`),
-  INDEX `user_idx` (`id_user` ASC) VISIBLE,
   CONSTRAINT `user`
     FOREIGN KEY (`id_user`)
     REFERENCES `motherpakar`.`tbl_user` (`id_user`)
