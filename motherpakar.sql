@@ -28,6 +28,16 @@ CREATE TABLE `tbl_gejala` (
 
 /*Data for the table `tbl_gejala` */
 
+insert  into `tbl_gejala`(`kd_gejala`,`gejala`) values 
+('K01','Kerusakan Slot Expansi'),
+('K02','Kerusakan Slot RAM'),
+('K03','Kerusakan Socket Processor'),
+('K04','Kerusakan Chipset Northbridge'),
+('K05','Kerusakan Chipset Southbridge'),
+('K06','Kerusakan pada BIOS'),
+('K07','Kerusakan pada CMOS'),
+('K08','Kerusakan pada Port I/O');
+
 /*Table structure for table `tbl_kerusakan` */
 
 DROP TABLE IF EXISTS `tbl_kerusakan`;
