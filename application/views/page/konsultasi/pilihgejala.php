@@ -19,21 +19,12 @@
 	     	<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 	        	<div class="card card-signin my-5">
 	          		<div class="card-body">
-	          			<form action="<?php echo base_url('home/start_konsultasi'); ?>" method="POST">
-				  			<div class="form-group">
-				  				<label>Pilih Kerusakan</label>
-				  				<select class="form-control" name="konsultasi">
-				  					<?php 
-				  						foreach ($macam_kerusakan as $macam) {
-				  					?>
-				  						<option value="<?php echo $macam['kd_kerusakan']; ?>"><?php echo $macam['kerusakan']; ?></option>
-				  					<?php 
-				  						} 
-				  					?>
-				  				</select>
-				  			</div>
-				  			<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" style="background-color: #000;border-color: #000;">Mulai</button>
-				  		</form>
+			  			<div class="form-group">
+			  				<h4 id="soal"></h4>
+			  			</div>	
+				  		<br>
+				  		<button class="btn btn-lg btn-primary btn-block text-uppercase" type="button" style="background-color: #000;border-color: #000;" id="tidak">Tidak</button>
+				  		<button class="btn btn-lg btn-primary btn-block text-uppercase" type="button" style="background-color: #000;border-color: #000;" id="iya">Ya</button>
 	            	</div>
 	        	</div>
 	      	</div>
@@ -48,7 +39,27 @@
 	<script type="text/javascript" rel="stylesheet" src="<?php echo base_url(); ?>vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('#register').collapse('hide');
+			$.ajax({
+				url  : "<?php echo site_url('home/cari_kerusakan') ?>/",
+				type : "POST",
+				dataType : "JSON",
+				success  : function(data)
+				{
+					$('#soal').text('Apakah'+data[0].gejala+' ?');
+				}
+			})
+		});
+
+		$('#iya').click(function(){
+			$.ajax({
+				url  : "<?php echo site_url('home/cari_kerusakan') ?>/ya",
+				type : "POST",
+				dataType : "JSON",
+				success  : function(data)
+				{
+					$('#soal').text('Apakah'+data[0].gejala+' ?');
+				}
+			})
 		})
 	</script>
 </body>
