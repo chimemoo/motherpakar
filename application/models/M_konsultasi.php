@@ -39,6 +39,33 @@ class M_konsultasi extends CI_Model {
 		return $this->db->insert('tbl_konsultasi_detail',$data);
 	}
 
+
+
+	function get_all_relation(){
+		$all = $this->db->get('tbl_relasi')->result_array();
+		$arr = [];
+		foreach ($all as $key => $value) {
+			$arr[$value['kd_kerusakan']] = explode(',', $value['kd_gejala']);
+		}
+		return $arr;
+	}
+
+	function new_tree($id_konsultasi,$kd_gejala){
+		$this->db->where('id_konsultasi',$id_konsultasi);
+		$get_konsul_temp = $this->db->get('tbl_konsultasi_detail')->result_array();
+		foreach ($get_konsul_temp as $key1 => $value1) {
+			foreach ($_SESSION['relasi'] as $key2=> $value2) {
+				if($key2 != $_SESSION['kd_kerusakan']){
+					foreach ($value2 as $key3 => $value3) {
+						if ($value3 == $kd_gejala) {
+							return $key2;
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
 
 /* End of file M_konsultasi.php */

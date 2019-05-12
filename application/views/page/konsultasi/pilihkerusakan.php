@@ -19,7 +19,7 @@
 	     	<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 	        	<div class="card card-signin my-5">
 	          		<div class="card-body">
-	          			<form action="<?php echo base_url('home/start_konsultasi'); ?>" method="POST">
+	          			<form action="<?php echo base_url('home/tambah_data_konsul'); ?>" method="POST">
 				  			<div class="form-group">
 				  				<label>Pilih Kerusakan</label>
 				  				<select class="form-control" name="konsultasi">

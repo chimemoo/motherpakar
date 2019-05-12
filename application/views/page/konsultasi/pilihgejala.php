@@ -40,7 +40,19 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$.ajax({
-				url  : "<?php echo site_url('home/cari_kerusakan') ?>/",
+				url  : "<?php echo site_url('home/pertanyaan') ?>/",
+				type : "POST",
+				dataType : "JSON",
+				success  : function(data)
+				{
+					$('#soal').text('Apakah '+data[0].gejala+' ?');
+				}
+			})
+		});
+
+		$('#iya').click(function(){
+			$.ajax({
+				url  : "<?php echo site_url('home/jawab') ?>/iya",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
@@ -48,11 +60,11 @@
 					$('#soal').text('Apakah'+data[0].gejala+' ?');
 				}
 			})
-		});
+		})
 
-		$('#iya').click(function(){
+		$('#tidak').click(function(){
 			$.ajax({
-				url  : "<?php echo site_url('home/cari_kerusakan') ?>/ya",
+				url  : "<?php echo site_url('home/jawab') ?>/tidak",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
