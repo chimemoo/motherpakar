@@ -42,8 +42,12 @@ class Home extends CI_Controller {
 			$array = array(
 				'relasi' => $relasi,
 				'no' => 0,
+				'no_tot' => 0,
+				'total_soal' => count($relasi[$konsultasi])-1,
 				'kd_kerusakan' => $konsultasi,
-				'id_konsultasi' => $start_konsultasi[0]['id_konsultasi']
+				'id_konsultasi' => $start_konsultasi[0]['id_konsultasi'],
+				'alternatif_k' => null,
+				'kd_tidak' => null
 			);
 			
 			$this->session->set_userdata( $array );
@@ -52,15 +56,6 @@ class Home extends CI_Controller {
 		}
 	}
 
-	function tambah_data_gejala($kd_gejala,$jawab){
-		#TAMBAH DATA GEJALA SEMENTARA
-		$tambah_detail_kerusakan = [
-			'id_konsultasi' => $_SESSION['id_konsultasi'],
-			'kd_gejala' => $kd_gejala,
-			'jawab' => $jawab
-		];
-		$this->M_konsultasi->tambah_konsuldetail($tambah_detail_kerusakan);
-	}
 
 	function daftar_gejala($kd_kerusakan){
 		#UNTUK MENCARI DAFTAR GEJALA
@@ -83,41 +78,85 @@ class Home extends CI_Controller {
 	function pertanyaan(){
 		#AMBIL PERTANYAAN (GEJALA)
 		$no_pert = $_SESSION['no'];
-		$pert = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$no_pert];
-		$pert = $this->M_konsultasi->getDetailGejala($pert);
-		$pert['kd_kerusakan'] = $_SESSION['kd_kerusakan'];
-		echo json_encode($pert);
+		if($_SESSION['no'] == $_SESSION['total_soal']){
+			$_SESSION['kd_tidak'] = $_SESSION['kd_kerusakan'];
+			$_SESSION['kd_kerusakan'] = $_SESSION['alternatif_k'];
+			$_SESSION['no'] = 0;
+			$_SESSION['total_soal'] = $_SESSION['no_tot'] + count($_SESSION['relasi'][$_SESSION['kd_kerusakan']]);
+		}
+		if($_SESSION['alternatif_k'] == $_SESSION['kd_tidak'] ){
+			$reply['status'] = false;
+			echo json_encode($reply);
+		}else {
+			if($_SESSION['no_tot'] < $_SESSION['total_soal']){
+				$pert['status'] = true;
+				$pert = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
+				$pert = $this->M_konsultasi->getDetailGejala($pert); 
+				$pert['kd_kerusakan'] = $_SESSION['kd_kerusakan'];
+				$pert['no'] = $_SESSION['no'];
+				$pert['total_soal'] = $_SESSION['total_soal'];
+				$pert['alternatif_k'] = $_SESSION['alternatif_k'];
+				$pert['no_tot'] = $_SESSION['no_tot'];
+				echo json_encode($pert);
+			}
+			else {
+				$reply['status'] = false;
+				echo json_encode($reply);
+			}
+		}
+
 	}
 	function jawab($jawaban){
 		$no = $_SESSION['no'];
 		$kd = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$no];
+		
 		if($jawaban == 'iya'){
 			$this->tambah_data_gejala($kd,'iya');
 			$_SESSION['no'] = $no+1;
+			$_SESSION['no_tot'] = $_SESSION['no_tot'] + 1;
 			$this->pertanyaan();
 		}
 		if ($jawaban == 'tidak' ) {
-			if(isset($_SESSION['tidak'])){
-				$this->tambah_data_gejala($kd,'tidak');
-				$_SESSION['kd_kerusakan'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
-				$_SESSION['no'] = 0;
-				$this->pertanyaan();
-			}
-			else{
-				if($no < sizeof($_SESSION['relasi'][$_SESSION['kd_kerusakan']])){
-					$this->tambah_data_gejala($kd,'tidak');
-					$_SESSION['tidak'] = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
-					$_SESSION['no'] = $no+1;
-					$this->pertanyaan();
-				}
-				else {
-					$this->tambah_data_gejala($kd,'tidak');
-					$_SESSION['kd_kerusakan'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
-					$_SESSION['no'] = 0;
-					$this->pertanyaan();
-				}
-			}
+			$_SESSION['kd_tidak'] = $_SESSION['kd_kerusakan'];
+			$this->tambah_data_gejala($kd,'tidak');
+			$_SESSION['no'] = $no+1;
+			$_SESSION['no_tot'] = $_SESSION['no_tot'] + 1;
+			$_SESSION['alternatif_k'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
+
+			$this->pertanyaan();
+			// if(isset($_SESSION['tidak'])){
+			// 	$this->tambah_data_gejala($kd,'tidak');
+			// 	$_SESSION['kd_kerusakan'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
+			// 	$_SESSION['no'] = 0;
+			// 	$this->pertanyaan();
+			// }
+			// else{
+			// 	if($no < sizeof($_SESSION['relasi'][$_SESSION['kd_kerusakan']])){
+			// 		$this->tambah_data_gejala($kd,'tidak');
+			// 		$_SESSION['tidak'] = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
+			// 		$_SESSION['no'] = $no+1;
+			// 		$this->pertanyaan();
+			// 	}
+			// 	else {
+			// 		$this->tambah_data_gejala($kd,'tidak');
+			// 		$_SESSION['kd_kerusakan'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
+			// 		$_SESSION['no'] = 0;
+			// 		$this->pertanyaan();
+			// 	}
+			// }
 		}
+
+
+	}
+
+	function tambah_data_gejala($kd_gejala,$jawab){
+		#TAMBAH DATA GEJALA SEMENTARA
+		$tambah_detail_kerusakan = [
+			'id_konsultasi' => $_SESSION['id_konsultasi'],
+			'kd_gejala' => $kd_gejala,
+			'jawab' => $jawab
+		];
+		$this->M_konsultasi->tambah_konsuldetail($tambah_detail_kerusakan);
 	}
 
 
