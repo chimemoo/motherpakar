@@ -78,32 +78,24 @@ class Home extends CI_Controller {
 	function pertanyaan(){
 		#AMBIL PERTANYAAN (GEJALA)
 		$no_pert = $_SESSION['no'];
-		if($_SESSION['no'] == $_SESSION['total_soal']){
+		if($_SESSION['no'] > $_SESSION['total_soal']){
 			$_SESSION['kd_tidak'] = $_SESSION['kd_kerusakan'];
 			$_SESSION['kd_kerusakan'] = $_SESSION['alternatif_k'];
 			$_SESSION['no'] = 0;
 			$_SESSION['total_soal'] = $_SESSION['no_tot'] + count($_SESSION['relasi'][$_SESSION['kd_kerusakan']]);
 		}
-		if($_SESSION['alternatif_k'] == $_SESSION['kd_tidak'] ){
-			$reply['status'] = false;
-			echo json_encode($reply);
-		}else {
-			if($_SESSION['no_tot'] < $_SESSION['total_soal']){
-				$pert['status'] = true;
-				$pert = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
-				$pert = $this->M_konsultasi->getDetailGejala($pert); 
-				$pert['kd_kerusakan'] = $_SESSION['kd_kerusakan'];
-				$pert['no'] = $_SESSION['no'];
-				$pert['total_soal'] = $_SESSION['total_soal'];
-				$pert['alternatif_k'] = $_SESSION['alternatif_k'];
-				$pert['no_tot'] = $_SESSION['no_tot'];
-				echo json_encode($pert);
-			}
-			else {
-				$reply['status'] = false;
-				echo json_encode($reply);
-			}
-		}
+		// if($_SESSION['relasi'][$_SESSION['kd_kerusakan']][$no_pert] == $_SESSION['kd_tidak'] ){
+		// 	$no_pert = $no_pert +1;
+		// }
+
+		$pert = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
+		$pert = $this->M_konsultasi->getDetailGejala($pert); 
+		$pert['kd_kerusakan'] = $_SESSION['kd_kerusakan'];
+		$pert['no'] = $_SESSION['no'];
+		$pert['total_soal'] = $_SESSION['total_soal'];
+		$pert['alternatif_k'] = $_SESSION['alternatif_k'];
+		$pert['no_tot'] = $_SESSION['no_tot'];
+		echo json_encode($pert);
 
 	}
 	function jawab($jawaban){
@@ -117,7 +109,7 @@ class Home extends CI_Controller {
 			$this->pertanyaan();
 		}
 		if ($jawaban == 'tidak' ) {
-			$_SESSION['kd_tidak'] = $_SESSION['kd_kerusakan'];
+			$_SESSION['kd_tidak'] = $kd;
 			$this->tambah_data_gejala($kd,'tidak');
 			$_SESSION['no'] = $no+1;
 			$_SESSION['no_tot'] = $_SESSION['no_tot'] + 1;
