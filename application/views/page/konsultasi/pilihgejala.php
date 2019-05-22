@@ -40,36 +40,46 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$.ajax({
-				url  : "<?php echo site_url('home/pertanyaan') ?>/",
+				url  : "<?php echo site_url('home2/control/start') ?>/",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
 				{
-					$('#soal').text('Apakah '+data[0].gejala+' ?');
+					$('#soal').text(data.gejala);
 				}
 			})
 		});
 
 		$('#iya').click(function(){
 			$.ajax({
-				url  : "<?php echo site_url('home/jawab') ?>/iya",
+				url  : "<?php echo site_url('home2/control') ?>/y",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
 				{
-					$('#soal').text('Apakah'+data[0].gejala+' ?');
+					if(data.status == true){
+						$('#soal').text(data.gejala);
+					}
+					else{
+						window.location.href = '<?php echo base_url("home2/hasil_konsultasi"); ?>';
+					}
 				}
 			})
 		})
 
 		$('#tidak').click(function(){
 			$.ajax({
-				url  : "<?php echo site_url('home/jawab') ?>/tidak",
+				url  : "<?php echo site_url('home2/control') ?>/t",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
 				{
-					$('#soal').text('Apakah'+data[0].gejala+' ?');
+					if(data.status == true){
+						$('#soal').text(data.gejala);
+					}
+					else{
+						window.location.href = '<?php echo base_url("home2/hasil_konsultasi"); ?>';
+					}
 				}
 			})
 		})
