@@ -1,12 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class M_penyebab extends CI_Model {
+class M_relasi extends CI_Model {
 
-	var $table = 'tbl_penyebab'; 
-    var $column_order = array(null,'kd_penyebab','penyebab'); 
-    var $column_search = array('kd_penyebab','penyebab'); 
-    var $order = array('kd_penyebab' => 'desc');  
+	//DATATABLES
+    var $table = 'tbl_relasi'; 
+    var $column_order = array('kd_kerusakan','kd_gejala','kd_solusi','kd_penyebab'); 
+    var $column_search = array('kd_kerusakan','kd_gejala','kd_solusi','kd_penyebab'); 
+    var $order = array('kd_kerusakan' => 'desc');  
  
     public function __construct()
     {
@@ -76,25 +77,29 @@ class M_penyebab extends CI_Model {
     }
     //DATATABLES
 
-    function tambah($data){
-        return $this->db->insert('tbl_penyebab',$data);
+    function get_gejala(){
+        return $this->db->get('tbl_relasi')->result_array();
     }
+
+    function tambah($data){
+        return $this->db->insert('tbl_relasi',$data);
+    }
+
     function hapus($id){
-        $this->db->where('kd_penyebab',$id);
-        return $this->db->delete('tbl_penyebab');
+        $this->db->where('kd_kerusakan',$id);
+        return $this->db->delete('tbl_relasi');
     }
     function showDetail($kode){
-        $this->db->where('kd_penyebab',$kode);
-        return $this->db->get('tbl_penyebab')->result_array();
+        $this->db->where('kd_kerusakan',$kode);
+        return $this->db->get('tbl_relasi')->result_array();
     }
     function update($data,$id){
-        $this->db->where('kd_penyebab', $id);
-        return $this->db->update('kd_penyebab', $data);
+        $this->db->where('kd_kerusakan', $id);
+        return $this->db->update('tbl_relasi', $data);
     }
-    
 
 }
 
-/* End of file M_penyebab.php */
-/* Location: ./application/models/M_penyebab.php */
+/* End of file M_relasi.php */
+/* Location: ./application/models/M_relasi.php */
 ?>

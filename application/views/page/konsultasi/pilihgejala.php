@@ -40,7 +40,7 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$.ajax({
-				url  : "<?php echo site_url('home2/control/start') ?>/",
+				url  : "<?php echo site_url('home/control/start') ?>/",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
@@ -52,7 +52,7 @@
 
 		$('#iya').click(function(){
 			$.ajax({
-				url  : "<?php echo site_url('home2/control') ?>/y",
+				url  : "<?php echo site_url('home/control') ?>/y",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
@@ -61,7 +61,7 @@
 						$('#soal').text(data.gejala);
 					}
 					else{
-						window.location.href = '<?php echo base_url("home2/hasil_konsultasi"); ?>';
+						window.location.href = '<?php echo base_url("home/hasil_konsultasi"); ?>';
 					}
 				}
 			})
@@ -69,7 +69,7 @@
 
 		$('#tidak').click(function(){
 			$.ajax({
-				url  : "<?php echo site_url('home2/control') ?>/t",
+				url  : "<?php echo site_url('home/control') ?>/t",
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)
@@ -78,7 +78,7 @@
 						$('#soal').text(data.gejala);
 					}
 					else{
-						window.location.href = '<?php echo base_url("home2/hasil_konsultasi"); ?>';
+						window.location.href = '<?php echo base_url("home/hasil_konsultasi"); ?>';
 					}
 				}
 			})

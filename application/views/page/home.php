@@ -20,12 +20,12 @@
 	        	<div class="card card-signin my-5">
 	          		<div class="card-body">
 	          			<ul class="list-group list-group-flush" style="text-align: center;">
-	          				<li class="list-group-item"><a href="#">MULAI KONSULTASI</a></li>
-	          				<li class="list-group-item"><a href="#">RIWAYAT KONSULTASI</a></li>
+	          				<li class="list-group-item"><a href="<?php echo base_url('home/mulai_konsultasi'); ?>">MULAI KONSULTASI</a></li>
+	          				<li class="list-group-item"><a href="<?php echo base_url('home/riwayat_konsultasi'); ?>">RIWAYAT KONSULTASI</a></li>
 	          			</ul>
 	          			<br><br><br><br>
 	          			<ul class="list-group list-group-flush" style="text-align: center;">
-	          				<li class="list-group-item"><a href="#">LOGOUT</a></li>
+	          				<li class="list-group-item"><a href="<?php echo base_url('login/logout') ?>">LOGOUT</a></li>
 	          			</ul>
 	            	</div>
 	        	</div>

@@ -81,6 +81,23 @@ class M_gejala extends CI_Model {
         return $this->db->get('tbl_gejala')->result_array();
     }
 
+    function tambah($data){
+        return $this->db->insert('tbl_gejala',$data);
+    }
+
+    function hapus($id){
+        $this->db->where('kd_gejala',$id);
+        return $this->db->delete('tbl_gejala');
+    }
+    function showDetail($kode){
+        $this->db->where('kd_gejala',$kode);
+        return $this->db->get('tbl_gejala')->result_array();
+    }
+    function update($data,$id){
+        $this->db->where('kd_gejala', $id);
+        return $this->db->update('tbl_gejala', $data);
+    }
+
 }
 
 /* End of file M_gejala.php */

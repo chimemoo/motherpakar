@@ -32,8 +32,8 @@ class Solusi extends CI_Controller {
             $row[] = $field->kd_solusi;
             $row[] = $field->solusi;
             $row[] = '
-            	<a class="btn btn-sm btn-danger m-1" href="javascript:void(0)" title="Hapus" onclick="deleteKamar('."'".$field->kd_solusi."'".')"><i class="fa fa-trash"></i></a>
-            	<a href="'.base_url().'admin/Master_kamar/edit/'.$field->solusi.'" class="btn btn-sm btn-success m-1"><i class="fa fa-edit"></i></a>
+            	<a class="btn btn-sm btn-danger m-1" href="javascript:void(0)" title="Hapus" onclick="deleteSolusi('."'".$field->kd_solusi."'".')"><i class="fa fa-trash"></i></a>
+            	<a href="'.base_url().'dashboard/solusi/edit/'.$field->kd_solusi.'" class="btn btn-sm btn-success m-1"><i class="fa fa-edit"></i></a>
         			';
  
             $data[] = $row;
@@ -48,6 +48,31 @@ class Solusi extends CI_Controller {
         //output dalam format JSON
         echo json_encode($output);
 	}
+    function tambah(){
+        $data = $this->input->post();
+        if($this->M_solusi->tambah($data)){
+            redirect(base_url('dashboard/solusi'));
+        };
+    }
+    function hapus($id){
+        $this->M_solusi->hapus($id);
+    }
+    function edit($kode)
+    {
+        $data = [
+            'title' => 'Dashboard | Solusi - Edit',
+            'content' => 'page/dashboard/solusi/edit',
+            'detail' => $this->M_solusi->showDetail($kode),
+            'kode' => $kode
+        ];
+
+        $this->load->view('template/template',$data);
+    }
+    function update($kode){
+        if($this->M_solusi->update($this->input->post(),$kode)){
+            redirect(base_url('dashboard/solusi'));
+        }
+    }
 
 }
 

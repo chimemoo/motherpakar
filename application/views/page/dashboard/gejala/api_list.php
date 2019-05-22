@@ -33,11 +33,11 @@
 </script>
 
 <script type="text/javascript">
-	function deleteObat(id){
+	function deleteGejala(id){
 		if(confirm('Apakah anda yakin menghapus data ini?')){
 
 			$.ajax({
-				url  : "<?php echo site_url('dashboard/gejala/api_delete') ?>/"+id,
+				url  : "<?php echo site_url('dashboard/gejala/hapus') ?>/"+id,
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)

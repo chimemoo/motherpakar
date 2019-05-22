@@ -27,5 +27,11 @@
         MENU KERUSAKAN
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="<?php echo base_url(); ?>dashboard/relasi">
+        <span data-feather="file-text"></span>
+        MENU RELASI
+      </a>
+    </li>
   </ul>
 </div>

@@ -75,7 +75,21 @@ class M_solusi extends CI_Model {
         return $this->db->count_all_results();
     }
     //DATATABLES
-
+    function tambah($data){
+        return $this->db->insert('tbl_solusi',$data);
+    }
+    function hapus($id){
+        $this->db->where('kd_solusi',$id);
+        return $this->db->delete('tbl_solusi');
+    }
+    function showDetail($kode){
+        $this->db->where('kd_solusi',$kode);
+        return $this->db->get('tbl_solusi')->result_array();
+    }
+    function update($data,$id){
+        $this->db->where('kd_solusi', $id);
+        return $this->db->update('tbl_solusi', $data);
+    }
 }
 
 /* End of file M_solusi.php */

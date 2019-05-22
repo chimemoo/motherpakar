@@ -10,7 +10,7 @@
 	            "order": [], 
 	             
 	            "ajax": {
-	                "url": "<?php echo site_url('dashboard/Penyebab/api_list')?>",
+	                "url": "<?php echo site_url('dashboard/relasi/api_list')?>",
 	                "type": "POST"
 	            },
 	 
@@ -33,11 +33,11 @@
 </script>
 
 <script type="text/javascript">
-	function deletePenyebab(id){
+	function deleteRelasi(id){
 		if(confirm('Apakah anda yakin menghapus data ini?')){
 
 			$.ajax({
-				url  : "<?php echo site_url('dashboard/Penyebab/hapus') ?>/"+id,
+				url  : "<?php echo site_url('dashboard/relasi/hapus') ?>/"+id,
 				type : "POST",
 				dataType : "JSON",
 				success  : function(data)

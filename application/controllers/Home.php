@@ -6,7 +6,7 @@ class Home extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('M_konsultasi');
+		$this->load->model('M_konsultasi_new');
 	}
 
 	public function index()
@@ -15,9 +15,12 @@ class Home extends CI_Controller {
 	}
 
 	function mulai_konsultasi(){
-		$this->session->unset_userdata('tidak');
+		$this->session->unset_userdata('gejala');
+		$this->session->unset_userdata('kd_kerusakan');
+		$this->session->unset_userdata('kesimpulan');
+		$this->session->unset_userdata('id_konsultasi');
 		$data = [
-			'macam_kerusakan' => $this->M_konsultasi->macam_kerusakan()
+			'macam_kerusakan' => $this->M_konsultasi_new->macamKerusakan()
 		];
 		$this->load->view('page/konsultasi/pilihkerusakan',$data);
 
@@ -28,196 +31,160 @@ class Home extends CI_Controller {
 		$this->load->view('page/konsultasi/pilihgejala');
 	}
 
-	function tambah_data_konsul(){
+	function createListGejala($kd_kerusakan){
+		
+		if(!isset($_SESSION['gejala'])){
+			$gejala = $this->M_konsultasi_new->getListGejala($kd_kerusakan);
+			$_SESSION['gejala'] = $gejala;
+		}
+		else {
+			$gejala = $this->M_konsultasi_new->getListGejala($kd_kerusakan);
+			$totalGejalaAwal = count($_SESSION['gejala']);
+			foreach ($gejala as  $value) {
+				$_SESSION['gejala'][$totalGejalaAwal] = $value;
+				$totalGejalaAwal = $totalGejalaAwal + 1;
+			}
+		}
+	}
+
+	function getPertanyaan($kd_gejala){
+		$pertanyaan = $this->M_konsultasi_new->getPertanyaan($kd_gejala);
+		$pertanyaan = 'Apakah '.$pertanyaan[0]['gejala'].' ?';
+		return $pertanyaan;
+	}
+
+	function tambahDataKonsul(){
 		#TAMBAH DATA KONSULTASI YG DIALAMI
-		$konsultasi = $this->input->post('konsultasi');
+		$kd_kerusakan = $this->input->post('konsultasi');
 		$data = [
 			'id_user' => 1,
 			'waktu'	=> date('Y-m-d H:i:s'),
-			'kd_kerusakan' => $konsultasi
+			'kd_kerusakan' => $kd_kerusakan
 		];
-		if($this->M_konsultasi->tmp_start_konsul($data)){
-			$relasi = $this->M_konsultasi->get_all_relation();
-			$start_konsultasi = $this->M_konsultasi->tmp_start_konsul($data);
+		$start_konsultasi = $this->M_konsultasi_new->tmpStartKonsul($data);
+		if($start_konsultasi){
+			$listGejala = $this->createListGejala($kd_kerusakan);
+			$_GEJALA['gejala'] = null;
 			$array = array(
-				'relasi' => $relasi,
-				'no' => 0,
-				'no_tot' => 0,
-				'total_soal' => count($relasi[$konsultasi])-1,
-				'kd_kerusakan' => $konsultasi,
 				'id_konsultasi' => $start_konsultasi[0]['id_konsultasi'],
-				'alternatif_k' => null,
-				'kd_tidak' => null
+				'kd_kerusakan' => [$kd_kerusakan],
+				'no' => 0,
+				'start_k' => 0
 			);
 			
 			$this->session->set_userdata( $array );
-			$this->daftar_gejala($kd_kerusakan);
-			redirect(base_url('home/konsultasi'));
+			redirect(base_url('home2/konsultasi'));
 		}
 	}
 
-
-	function daftar_gejala($kd_kerusakan){
-		#UNTUK MENCARI DAFTAR GEJALA
-		$daftar_gejala = $this->M_konsultasi->ambil_gejala($kd_kerusakan);
-		$array = array(
-			'daftar_gejala' => $daftar_gejala
-		);
-		
-		$this->session->set_userdata( $array );
-	}
-
-	function cek_hasil(){
-		#UNTUK MENGHITUNG HASIL
-	}
-
-	function jalur_baru(){
-		#MENAMBAH GEJALA BARU
-		
-	}
 	function pertanyaan(){
-		#AMBIL PERTANYAAN (GEJALA)
-		$no_pert = $_SESSION['no'];
-		if($_SESSION['no'] > $_SESSION['total_soal']){
-			$_SESSION['kd_tidak'] = $_SESSION['kd_kerusakan'];
-			$_SESSION['kd_kerusakan'] = $_SESSION['alternatif_k'];
-			$_SESSION['no'] = 0;
-			$_SESSION['total_soal'] = $_SESSION['no_tot'] + count($_SESSION['relasi'][$_SESSION['kd_kerusakan']]);
+		if($_SESSION['no'] < count($_SESSION['gejala'])){
+			$no_gejala = $_SESSION['no'];
+			$reply = [
+				'status' 		=> true,
+				'kd_gejala'		=> $_SESSION['gejala'][$no_gejala],
+				'gejala' 		=> $this->getPertanyaan($_SESSION['gejala'][$no_gejala])
+			];
+			echo json_encode($reply);
 		}
-		// if($_SESSION['relasi'][$_SESSION['kd_kerusakan']][$no_pert] == $_SESSION['kd_tidak'] ){
-		// 	$no_pert = $no_pert +1;
-		// }
-
-		$pert = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
-		$pert = $this->M_konsultasi->getDetailGejala($pert); 
-		$pert['kd_kerusakan'] = $_SESSION['kd_kerusakan'];
-		$pert['no'] = $_SESSION['no'];
-		$pert['total_soal'] = $_SESSION['total_soal'];
-		$pert['alternatif_k'] = $_SESSION['alternatif_k'];
-		$pert['no_tot'] = $_SESSION['no_tot'];
-		echo json_encode($pert);
-
-	}
-	function jawab($jawaban){
-		$no = $_SESSION['no'];
-		$kd = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$no];
-		
-		if($jawaban == 'iya'){
-			$this->tambah_data_gejala($kd,'iya');
-			$_SESSION['no'] = $no+1;
-			$_SESSION['no_tot'] = $_SESSION['no_tot'] + 1;
-			$this->pertanyaan();
+		else {
+			$this->stop();
 		}
-		if ($jawaban == 'tidak' ) {
-			$_SESSION['kd_tidak'] = $kd;
-			$this->tambah_data_gejala($kd,'tidak');
-			$_SESSION['no'] = $no+1;
-			$_SESSION['no_tot'] = $_SESSION['no_tot'] + 1;
-			$_SESSION['alternatif_k'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
-
-			$this->pertanyaan();
-			// if(isset($_SESSION['tidak'])){
-			// 	$this->tambah_data_gejala($kd,'tidak');
-			// 	$_SESSION['kd_kerusakan'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
-			// 	$_SESSION['no'] = 0;
-			// 	$this->pertanyaan();
-			// }
-			// else{
-			// 	if($no < sizeof($_SESSION['relasi'][$_SESSION['kd_kerusakan']])){
-			// 		$this->tambah_data_gejala($kd,'tidak');
-			// 		$_SESSION['tidak'] = $_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']];
-			// 		$_SESSION['no'] = $no+1;
-			// 		$this->pertanyaan();
-			// 	}
-			// 	else {
-			// 		$this->tambah_data_gejala($kd,'tidak');
-			// 		$_SESSION['kd_kerusakan'] = $this->M_konsultasi->new_tree($_SESSION['id_konsultasi'],$_SESSION['relasi'][$_SESSION['kd_kerusakan']][$_SESSION['no']]);
-			// 		$_SESSION['no'] = 0;
-			// 		$this->pertanyaan();
-			// 	}
-			// }
-		}
-
-
 	}
 
-	function tambah_data_gejala($kd_gejala,$jawab){
+	function jawab($kd_gejala, $jawaban){
+		$this->tambahDataGejala($kd_gejala,$jawaban);
+	}
+
+	function tambahDataGejala($kd_gejala,$jawab){
 		#TAMBAH DATA GEJALA SEMENTARA
 		$tambah_detail_kerusakan = [
 			'id_konsultasi' => $_SESSION['id_konsultasi'],
 			'kd_gejala' => $kd_gejala,
+			'kd_kerusakan' => $_SESSION['kd_kerusakan'][$_SESSION['start_k']],
 			'jawab' => $jawab
 		];
-		$this->M_konsultasi->tambah_konsuldetail($tambah_detail_kerusakan);
+		$this->M_konsultasi_new->tambahKonsulDetail($tambah_detail_kerusakan);
 	}
 
+	function control($param){
+		
+		if($param == 'start'){
+			$this->pertanyaan();
+		}
+		elseif ($param == 'y') {
+			$this->jawab($_SESSION['gejala'][$_SESSION['no']],'y');
+			$_SESSION['no'] = $_SESSION['no'] + 1;
+			$this->pertanyaan();
+		}
+		elseif ($param == 't') {
+			$this->jawab($_SESSION['gejala'][$_SESSION['no']],'t');
+			$alternatifK = $this->M_konsultasi_new->getAlternatifKerusakan($_SESSION['kd_kerusakan'][$_SESSION['start_k']],$_SESSION['gejala'][$_SESSION['no']]);
+			if(!in_array($alternatifK, $_SESSION['kd_kerusakan'])){
+				if($alternatifK!=null){
+					array_push($_SESSION['kd_kerusakan'], $alternatifK);
+					$_SESSION['start_k'] = $_SESSION['start_k'] + 1;
+					$this->createListGejala($alternatifK);	
+				}
+				
+			}
+			$_SESSION['no'] = $_SESSION['no'] + 1;
+			$this->pertanyaan();
+		}
+		
+		
+	}
 
-
-
-
-
-
-	function start_konsultasi(){
-		$konsultasi = $this->input->post('konsultasi');
-		$data = [
-			'id_user' => 1,
-			'waktu'	=> date('Y-m-d H:i:s'),
-			'kd_kerusakan' => $konsultasi
+	function stop(){
+		$reply = [
+			'status' => false
 		];
-		if($data){
-			$start_konsultasi = $this->M_konsultasi->tmp_start_konsul($data);
-			$array = array(
-				'kd_kerusakan' => $konsultasi,
-				'id_konsultasi' => $start_konsultasi[0]['id_konsultasi']
-			);
-			
-			$this->session->set_userdata($array);
-			redirect(base_url('home/mulai_konsultasi'));
+		echo json_encode($reply);
+	}
+
+	function kesimpulan(){
+		$h = $this->M_konsultasi_new->get_count($_SESSION['id_konsultasi']);
+		$terbesar = max($h);
+		foreach ($h as $key => $value) {
+			if($value == $terbesar){
+				return $key;
+			}
 		}
 	}
 
-	function mulai2_konsultasi(){
-		$kd_kerusakan = $_SESSION['kd_kerusakan'];
-		$data_gejala = $this->M_konsultasi->ambil_gejala($kd_kerusakan);
-		$array = array(
-			'data_gejala' => $data_gejala,
-			'total_gejala' => count($data_gejala),
-			'no' => 0
-		);
-		
-		$this->session->set_userdata( $array );
-		$this->load->view('page/konsultasi/pilihgejala');
+
+	function getDetailKerusakan($kd_kerusakan){
+		$dat = $this->M_konsultasi_new->getDetailKerusakan($kd_kerusakan);
+		return $dat[0];
 	}
 
-	function cari_kerusakan($pilihan=''){
-		$idkonsultasi = $_SESSION['id_konsultasi'];
-		if($pilihan = ''){
+	function hasil_konsultasi(){
+		$this->session->unset_userdata('gejala');
+		$kerusakan = $this->kesimpulan();
 
-		}
-		else {
-			if($_SESSION['no'] < $_SESSION['total_gejala']){
-				$kd_gejala = $_SESSION['data_gejala'][$_SESSION['no']];
-				$gejalaNow = $this->M_konsultasi->getDetailGejala($kd_gejala);
-				$tambah_detail_kerusakan = [
-					'id_konsultasi' => $idkonsultasi,
-					'kd_gejala' => $kd_gejala,
-					'jawab' => $pilihan
-				];
-				$this->M_konsultasi->tambah_konsuldetail($tambah_detail_kerusakan);
-				$_SESSION['no'] = $_SESSION['no']+1;
-				echo json_encode($gejalaNow);
-			}	
-		}
-		
+		$data = [
+			'kerusakan' => $this->getDetailKerusakan($kerusakan),
+			'solusi' => $this->M_konsultasi_new->getSolusiDetail($kerusakan),
+			'penyebab' => $this->M_konsultasi_new->getPenyebabDetail($kerusakan)
+		];
+		$this->load->view('page/konsultasi/hasilkonsultasi',$data);
 	}
+
 	function test(){
-		var_dump(sizeof($_SESSION['relasi'][$_SESSION['kd_kerusakan']]));
+		var_dump($_SESSION['kd_kerusakan']);
+		var_dump($_SESSION['kd_kerusakan'][$_SESSION['start_k']]);
 	}
+
+	function riwayat_konsultasi(){
+		$data_riwayat = $this->M_konsultasi_new->getRiwayat($_SESSION['id']);
+	}
+
+
+
 
 	
 
 }
 
-/* End of file Home.php */
-/* Location: ./application/controllers/Home.php */
-?>
+/* End of file Home2.php */
+/* Location: ./application/controllers/Dashboard/Home2.php */ ?>

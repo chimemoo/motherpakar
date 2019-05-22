@@ -27,31 +27,31 @@
 						</nav>
 						<div class="tab-content" id="nav-tabContent">
 						  	<div class="tab-pane fade show active" id="login-form" role="tabpanel" aria-labelledby="login-form-tab">
-						  		<form>
+						  		<form action="<?php echo base_url('Login/login_process') ?>" method="POST">
 						  			<div class="form-group">
 						  				<label>Username</label>
-						  				<input type="text" name="username" class="form-control">
+						  				<input type="text" name="username" class="form-control" required>
 						  			</div>
 						  			<div class="form-group">
 						  				<label>Password</label>
-						  				<input type="password" name="password" class="form-control">
+						  				<input type="password" name="password" class="form-control" required>
 						  			</div>
 						  			<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" style="background-color: #000;border-color: #000;">Sign in</button>
 						  		</form>
 						  	</div>
 						  	<div class="tab-pane fade" id="reg-form" role="tabpanel" aria-labelledby="reg-form-tab">
-						  		<form>
+						  		<form action="<?php echo base_url('Login/registration_process') ?>" method="POST">
 						  			<div class="form-group">
 						  				<label>Username</label>
-						  				<input type="text" name="username" class="form-control">
+						  				<input type="text" name="username" class="form-control" required>
 						  			</div>
 						  			<div class="form-group">
 						  				<label>Password</label>
-						  				<input type="password" name="password" class="form-control">
+						  				<input type="password" name="password" class="form-control" required>
 						  			</div>
 						  			<div class="form-group">
 						  				<label>Alamat</label>
-						  				<textarea name="alamat" class="form-control"></textarea>
+						  				<textarea name="alamat" class="form-control" required></textarea>
 						  			</div>
 						  			<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" style="background-color: #000;border-color: #000;">Register</button>
 						  		</form>

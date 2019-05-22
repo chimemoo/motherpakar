@@ -74,8 +74,23 @@ class M_kerusakan extends CI_Model {
         $this->db->from($this->table);
         return $this->db->count_all_results();
     }
-    //DATATABLES	
-
+    //DATATABLES
+    function tambah($data){
+        return $this->db->insert('tbl_kerusakan',$data);
+    }
+    function hapus($id){
+        $this->db->where('kd_kerusakan',$id);
+        return $this->db->delete('tbl_kerusakan');
+    }	
+    function showDetail($kode){
+        $this->db->where('kd_kerusakan',$kode);
+        return $this->db->get('tbl_kerusakan')->result_array();
+    }
+    function update($data,$id){
+        $this->db->where('kd_kerusakan', $id);
+        return $this->db->update('tbl_kerusakan', $data);
+    }
+ 
 }
 
 /* End of file M_kerusakan.php */

@@ -32,8 +32,8 @@ class Kerusakan extends CI_Controller {
             $row[] = $field->kd_kerusakan;
             $row[] = $field->kerusakan;
             $row[] = '
-            	<a class="btn btn-sm btn-danger m-1" href="javascript:void(0)" title="Hapus" onclick="deleteKamar('."'".$field->kd_kerusakan."'".')"><i class="fa fa-trash"></i></a>
-            	<a href="'.base_url().'admin/Master_kamar/edit/'.$field->kerusakan.'" class="btn btn-sm btn-success m-1"><i class="fa fa-edit"></i></a>
+            	<a class="btn btn-sm btn-danger m-1" href="javascript:void(0)" title="Hapus" onclick="deleteKerusakan('."'".$field->kd_kerusakan."'".')"><i class="fa fa-trash"></i></a>
+            	<a href="'.base_url().'dashboard/kerusakan/edit/'.$field->kd_kerusakan.'" class="btn btn-sm btn-success m-1"><i class="fa fa-edit"></i></a>
         			';
  
             $data[] = $row;
@@ -48,6 +48,31 @@ class Kerusakan extends CI_Controller {
         //output dalam format JSON
         echo json_encode($output);
 	}
+    function tambah(){
+        $data = $this->input->post();
+        if($this->M_kerusakan->tambah($data)){
+            redirect(base_url('dashboard/kerusakan'));
+        };
+    }
+    function hapus($id){
+        $this->M_kerusakan->hapus($id);
+    }
+    function edit($kode)
+    {
+        $data = [
+            'title' => 'Dashboard | Kerusakan - Edit',
+            'content' => 'page/dashboard/kerusakan/edit',
+            'detail' => $this->M_kerusakan->showDetail($kode),
+            'kode' => $kode
+        ];
+
+        $this->load->view('template/template',$data);
+    }
+    function update($kode){
+        if($this->M_kerusakan->update($this->input->post(),$kode)){
+            redirect(base_url('dashboard/kerusakan'));
+        }
+    }
 
 }
 
