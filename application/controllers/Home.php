@@ -57,7 +57,7 @@ class Home extends CI_Controller {
 		#TAMBAH DATA KONSULTASI YG DIALAMI
 		$kd_kerusakan = $this->input->post('konsultasi');
 		$data = [
-			'id_user' => 1,
+			'id_user' => $_SESSION['id_user'],
 			'waktu'	=> date('Y-m-d H:i:s'),
 			'kd_kerusakan' => $kd_kerusakan
 		];
@@ -73,7 +73,7 @@ class Home extends CI_Controller {
 			);
 			
 			$this->session->set_userdata( $array );
-			redirect(base_url('home2/konsultasi'));
+			redirect(base_url('home/konsultasi'));
 		}
 	}
 
@@ -161,6 +161,7 @@ class Home extends CI_Controller {
 	function hasil_konsultasi(){
 		$this->session->unset_userdata('gejala');
 		$kerusakan = $this->kesimpulan();
+		$this->M_konsultasi_new->updateKonsultasi($kerusakan,$_SESSION['id_konsultasi']);
 
 		$data = [
 			'kerusakan' => $this->getDetailKerusakan($kerusakan),
@@ -176,8 +177,23 @@ class Home extends CI_Controller {
 	}
 
 	function riwayat_konsultasi(){
-		$data_riwayat = $this->M_konsultasi_new->getRiwayat($_SESSION['id']);
+		$data_riwayat = $this->M_konsultasi_new->getRiwayat($_SESSION['id_user']);
+		$data = [
+			'data_riwayat' => $data_riwayat
+		];
+		$this->load->view('page/konsultasi/riwayatkonsultasi',$data);
 	}
+	function detail_konsultasi($kd_konsultasi){
+		$kerusakan = $this->M_konsultasi_new->getIdKonsultasi($kd_konsultasi);
+		$kerusakan = $kerusakan[0]['kd_kerusakan'];
+		$data = [
+			'kerusakan' => $this->getDetailKerusakan($kerusakan),
+			'solusi' => $this->M_konsultasi_new->getSolusiDetail($kerusakan),
+			'penyebab' => $this->M_konsultasi_new->getPenyebabDetail($kerusakan)
+		];
+		$this->load->view('page/konsultasi/detailkonsultasi',$data);
+	}
+
 
 
 

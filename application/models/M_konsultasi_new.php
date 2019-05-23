@@ -96,6 +96,19 @@ class M_konsultasi_new extends CI_Model {
 		}
 		return $detailPenyebab;
 	}
+	function getRiwayat($id_user){
+		$this->db->where('id_user',$id_user);
+		return $this->db->get('tbl_konsultasi')->result_array();
+	}
+	function updateKonsultasi($kd_kerusakan,$id_konsultasi){
+		$this->db->set('kd_kerusakan', $kd_kerusakan);
+        $this->db->where('id_konsultasi', $id_konsultasi);
+        return $this->db->update('tbl_konsultasi');
+	}
+	function getIdKonsultasi($id_konsultasi){
+		$this->db->where('id_konsultasi',$id_konsultasi);
+		return $this->db->get('tbl_konsultasi')->result_array();
+	}
 
 
 

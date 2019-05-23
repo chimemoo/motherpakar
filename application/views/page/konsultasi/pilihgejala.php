@@ -12,7 +12,7 @@
 			<div class="col" style="text-align: center;">
 				<br><br><br><br>
 				<img src="<?php echo base_url(); ?>assets/img/motherboard.png" style="max-width: 60px;max-height: 60px;" class="rounded mx-auto d-block"><br>
-				<h2>MOTHERPAKAR</h2>
+				<h2><a href="<?php echo base_url(); ?>" style="color:#000">MOTHERPAKAR</a></h2>
 			</div>
 		</div>
 	    <div class="row">

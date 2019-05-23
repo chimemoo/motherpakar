@@ -12,14 +12,14 @@
 			<div class="col" style="text-align: center;">
 				<br><br><br><br>
 				<img src="<?php echo base_url(); ?>assets/img/motherboard.png" style="max-width: 60px;max-height: 60px;" class="rounded mx-auto d-block"><br>
-				<h2>MOTHERPAKAR</h2>
+				<h2><a href="<?php echo base_url(); ?>" style="color:#000">MOTHERPAKAR</a></h2>
 			</div>
 		</div>
 	    <div class="row">
 	     	<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 	        	<div class="card card-signin my-5">
 	          		<div class="card-body">
-	          			<form action="<?php echo base_url('home2/tambahDataKonsul'); ?>" method="POST">
+	          			<form action="<?php echo base_url('home/tambahDataKonsul'); ?>" method="POST">
 				  			<div class="form-group">
 				  				<label>Pilih Kerusakan</label>
 				  				<select class="form-control" name="konsultasi">

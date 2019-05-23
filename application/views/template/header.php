@@ -1,3 +1,8 @@
+<?php if(isset($_SESSION['jenis']) && $_SESSION['jenis'] == 'pakar'){
+	return true;
+}else{
+	redirect(base_url());
+} ?>
 <!DOCTYPE html>
 <html>
 <head>

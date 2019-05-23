@@ -11,6 +11,7 @@ class Login extends CI_Controller {
 
 	public function index()
 	{
+		$this->is_login();
 		$this->load->view('page/login');
 	}
 
@@ -25,12 +26,19 @@ class Login extends CI_Controller {
 			if($this->M_auth->cekJenis($data) == 'pengguna'){
 				$userdata = [
 					'username' => $username,
-					'id_user'  => $this->M_auth->getId($data)
+					'id_user'  => $this->M_auth->getId($data),
+					'jenis'	   => 'pengguna'
 				];
-				$this->session->userdata($userdata);
+				$this->session->set_userdata($userdata);
 				redirect(base_url('Home'));	
 			}
 			else{
+				$userdata = [
+					'username' => $username,
+					'id_user'  => $this->M_auth->getId($data),
+					'jenis'	   => 'pakar'
+				];
+				$this->session->set_userdata($userdata);
 				redirect(base_url('Dashboard/main'));
 			}
 			
@@ -49,6 +57,17 @@ class Login extends CI_Controller {
 		];
 		if($this->M_auth->registration_process($data) > 0){
 			redirect(base_url('Login'));
+		}
+	}
+
+	function is_login(){
+		if(isset($_SESSION['jenis'])){
+			if($_SESSION['jenis'] == 'pengguna'){
+				redirect(base_url('Home'));
+			}
+			else {
+				redirect(base_url('Dashboard/main'));	
+			}
 		}
 	}
 
